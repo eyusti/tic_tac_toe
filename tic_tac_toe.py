@@ -95,31 +95,35 @@ def random_slot_generation():
     x = randint(0,2)
     y = randint(0,2)
     return x , y
-
-print("Welcome to tic-tac-toe! Ready to get started? X will be going first.")
-while totalSymbols <= 9:
-    row, column, current_symbol = getInputs()
-
-    while board[row - 1][column - 1] != "?":
-        print("That spot is already taken...")
+    
+def pvp_gameplay():
+    global totalSymbols
+    while totalSymbols <= 9:
         row, column, current_symbol = getInputs()
 
-    if board[row - 1][column - 1] == "?":
-        place(current_symbol,column,row)
-        totalSymbols += 1
+        while board[row - 1][column - 1] != "?":
+            print("That spot is already taken...")
+            row, column, current_symbol = getInputs()
 
-    if totalSymbols >= 5:
-        check_1 = checkForWinnerRow(board)
-        check_2 = checkForWinnerColumn(board)
-        check_3 = checkForWinnerDiagonal(board)
-        check_4 = checkForWinnerOtherDiagonal(board)
-        if check_1 or check_2 or check_3 or check_4:
-            print("The winner is" + winner)
-            break
+        if board[row - 1][column - 1] == "?":
+            place(current_symbol,column,row)
+            totalSymbols += 1
+
+        if totalSymbols >= 5:
+            check_1 = checkForWinnerRow(board)
+            check_2 = checkForWinnerColumn(board)
+            check_3 = checkForWinnerDiagonal(board)
+            check_4 = checkForWinnerOtherDiagonal(board)
+            if check_1 or check_2 or check_3 or check_4:
+                print("The winner is" + winner)
+                break
     ###print(board)
-    print_board(board)
-if totalSymbols == 9:
-    print("It's a tie!!")
+        print_board(board)
+    if totalSymbols == 9:
+        print("It's a tie!!")
+
+print("Welcome to tic-tac-toe! Ready to get started? X will be going first.")
+pvp_gameplay()
 
 
 
