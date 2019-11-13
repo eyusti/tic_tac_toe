@@ -3,6 +3,8 @@ board = [["?","?","?"],["?","?","?"],["?","?","?"]]
 board_size = 3
 winner = None
 totalSymbols = 0
+blocker_column = None
+blocker_row = None
 
 def print_board(board):
     print("\n {0} | {1} | {2} \n _________ \n {3} | {4} | {5} \n _________ \n {6} | {7} | {8} \n".format(board[0][0],board[0][1],board[0][2],board[1][0],board[1][1],board[1][2],board[2][0],board[2][1],board[2][2]))
@@ -95,6 +97,16 @@ def random_slot_generation():
     x = randint(0,2)
     y = randint(0,2)
     return x , y
+
+def check_row_for_block(board):
+    global blocker_column
+    global blocker_row
+    row_id = 0
+    for row in board:
+        row_id += 1
+        if row.count("X") == 2 and row.count("?") > 0:
+            blocker_row = row_id
+            blocker_column = row.index("?") + 1
     
 def pvp_gameplay():
     global totalSymbols
@@ -152,19 +164,69 @@ def beginner_ai():
             if check_1 or check_2 or check_3 or check_4:
                 print("The winner is" + winner)
                 break
-    ###print(board)
+     ###print(board)
         print_board(board)
     if totalSymbols == 9:
         print("It's a tie!!")
 
+def intermediate_ai():
+    global totalSymbols
+    global blocker_column
+    global blocker_row
+
+    while totalSymbols <= 9:
+        if totalSymbols % 2 == 0:
+            row, column, current_symbol = getInputs()
+            current_symbol = "X"
+            while board[row - 1][column - 1] != "?":
+                print("That spot is already taken...")
+                row, column, current_symbol = getInputs()
+                current_symbol = "X"
+        else:
+            check_row_for_block(board)
+            print(blocker_column)
+            print(blocker_row)
+            if blocker_column is not None:
+                place("O", blocker_column, blocker_row)
+                totalSymbols += 1
+                blocker_column = None
+                blocker_row = None
+            else:
+                row, column = random_slot_generation()
+                current_symbol = "O" 
+                while board[row][column] != "?":
+                    row, column = random_slot_generation()
+                    current_symbol = "O"
+            
+        if board[row - 1][column - 1] == "?":
+            place(current_symbol,column,row)
+            totalSymbols += 1
+
+        if totalSymbols >= 5:
+            check_1 = checkForWinnerRow(board)
+            check_2 = checkForWinnerColumn(board)
+            check_3 = checkForWinnerDiagonal(board)
+            check_4 = checkForWinnerOtherDiagonal(board)
+            if check_1 or check_2 or check_3 or check_4:
+                print("The winner is" + winner)
+                break 
+     ###print(board)  
+        print_board(board)
+    if totalSymbols == 9:
+        print("It's a tie!!") 
+    
+
 print("Welcome to tic-tac-toe!")
-game_type = input("Which game would you like to play? PvP (P) / Beginner (B) / Advanced (A): ")
+game_type = input("Which game would you like to play? PvP (P) / Beginner (B) / Intermediate (I) / Advanced (A): ")
 if game_type == "p" or game_type == "P":
     print("Ready to get started? X will be going first.")
     pvp_gameplay()
 if game_type == "b" or game_type == "B":
     print("Ready to get started? X will be going first.")
     beginner_ai()
+if game_type == "i" or game_type == "I":
+    print("Ready to get started? X will be going first.")
+    intermediate_ai()
 
 
 
