@@ -107,7 +107,28 @@ def check_row_for_block(board):
         if row.count("X") == 2 and row.count("?") > 0:
             blocker_row = row_id
             blocker_column = row.index("?") + 1
-    
+
+def check_column_for_block(board):
+    global winner
+    x_total = 0
+    o_total = 0
+    current_column = 0
+    while current_column < board_size:    
+        for row in board:
+            if row[current_column] == "X":
+                x_total += 1
+            if row[current_column] == "O":
+                o_total += 1
+        if x_total == board_size:
+            winner = " X"
+            return True
+        if o_total == board_size:
+            winner = " O"
+            return True
+        o_total = 0
+        x_total = 0 
+        current_column += 1 
+
 def pvp_gameplay():
     global totalSymbols
     while totalSymbols <= 9:
@@ -135,6 +156,7 @@ def pvp_gameplay():
         print("It's a tie!!")
 
 def beginner_ai():
+    # Generates random moves
     global totalSymbols
     while totalSymbols <= 9:
         if totalSymbols % 2 == 0:
@@ -170,6 +192,7 @@ def beginner_ai():
         print("It's a tie!!")
 
 def intermediate_ai():
+    # Defensively blocks opponent completion
     global totalSymbols
     global blocker_column
     global blocker_row
@@ -213,11 +236,18 @@ def intermediate_ai():
      ###print(board)  
         print_board(board)
     if totalSymbols == 9:
-        print("It's a tie!!") 
+        print("It's a tie!!")
+
+def advanced_ai():
+    # Actively looks for completions for wins and defensively blocks opponent completions
+    global totalSymbols
+
+def expert_ai()
+    # Attempts to set up completion attempts as well as preemptivly block completion attempts as well as addressing obvious completions and blocks
     
 
 print("Welcome to tic-tac-toe!")
-game_type = input("Which game would you like to play? PvP (P) / Beginner (B) / Intermediate (I) / Advanced (A): ")
+game_type = input("Which game would you like to play? PvP (P) / Beginner (B) / Intermediate (I) / Advanced (A) / Expert (E): ")
 if game_type == "p" or game_type == "P":
     print("Ready to get started? X will be going first.")
     pvp_gameplay()
@@ -227,6 +257,12 @@ if game_type == "b" or game_type == "B":
 if game_type == "i" or game_type == "I":
     print("Ready to get started? X will be going first.")
     intermediate_ai()
+if game_type == "a" or game_type == "A":
+    print("Ready to get started? X will be going first.")
+    advanced_ai()
+if game_type == "e" or game_type == "E":
+    print("Ready to get started? X will be going first.")
+    expert_ai()
 
 
 
