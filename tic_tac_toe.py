@@ -5,6 +5,8 @@ winner = None
 totalSymbols = 0
 blocker_column = None
 blocker_row = None
+win_column = None
+win_row = None
 
 def print_board(board):
     print("\n {0} | {1} | {2} \n _________ \n {3} | {4} | {5} \n _________ \n {6} | {7} | {8} \n".format(board[0][0],board[0][1],board[0][2],board[1][0],board[1][1],board[1][2],board[2][0],board[2][1],board[2][2]))
@@ -148,6 +150,56 @@ def check_column_for_block(board):
         current_column += 1
         current_row += 1
 
+def check_row_to_win(board):
+    global win_column
+    global win_row
+    row_id = 0
+    for row in board:
+        row_id += 1
+        if row.count("O") == 2 and row.count("?") > 0:
+            win_row = row_id
+            win_column = row.index("?") + 1
+
+def check_diagonal_to_win(board):
+    global win_column
+    global win_row
+    diagonal_list = []
+    for i in range(3):
+        diagonal_list.append(board[i][i])
+    if diagonal_list.count("O") == 2 and diagonal_list.count("?") > 0:
+        space_id = diagonal_list.index("?")
+        win_row = space_id + 1
+        win_column = space_id + 1
+
+def check_other_diagonal_to_win(board):
+    global win_column
+    global win_row
+    diagonal_list = []
+    z = 2
+    for i in range(3):
+        diagonal_list.append(board[z][i])
+        z -= 1
+    if diagonal_list.count("O") == 2 and diagonal_list.count("?") > 0:
+        space_id = diagonal_list.index("?")
+        win_row = 3 - space_id
+        win_column = space_id + 1
+
+def check_column_to_win(board):
+    global win_column
+    global win_row
+    current_column = 0
+    current_row = 0
+    column_list = []
+    while current_column < board_size:    
+        for row in board:
+            column_list.append(row[current_column])
+            if column_list.count("O") > 2 and column_list.count("?") > 0:
+                win_column = column_list.index("?")
+                win_row = current_row
+        column_list = []
+        current_column += 1
+        current_row += 1
+
 def pvp_gameplay():
     global totalSymbols
     while totalSymbols <= 9:
@@ -229,8 +281,6 @@ def intermediate_ai():
             check_diagonal_for_block(board)
             check_other_diagonal_for_block(board)
             check_column_for_block(board)
-            print(blocker_column)
-            print(blocker_row)
             if blocker_column is not None:
                 place("O", blocker_column, blocker_row)
                 totalSymbols += 1
@@ -260,8 +310,60 @@ def intermediate_ai():
     if totalSymbols == 9:
         print("It's a tie!!")
 
-#def advanced_ai():
+def advanced_ai():
     # Actively looks for completions for wins and defensively blocks opponent completions
+    global totalSymbols
+    global blocker_column
+    global blocker_row
+
+    while totalSymbols <= 9:
+        if totalSymbols % 2 == 0:
+            row, column, current_symbol = getInputs()
+            current_symbol = "X"
+            while board[row - 1][column - 1] != "?":
+                print("That spot is already taken...")
+                row, column, current_symbol = getInputs()
+                current_symbol = "X"
+        else:
+            check_row_to_win(board)
+            check_diagonal_to_win(board)
+            check_other_diagonal_to_win(board)
+            check_column_to_win(board)
+            check_row_for_block(board)
+            check_diagonal_for_block(board)
+            check_other_diagonal_for_block(board)
+            check_column_for_block(board)
+            if win_column is not None:
+                place("O", win_column, win_row) 
+            elif blocker_column is not None:
+                place("O", blocker_column, blocker_row)
+                totalSymbols += 1
+                blocker_column = None
+                blocker_row = None
+            else:
+                row, column = random_slot_generation()
+                current_symbol = "O" 
+                while board[row][column] != "?":
+                    row, column = random_slot_generation()
+                    current_symbol = "O"
+            
+        if board[row - 1][column - 1] == "?":
+            place(current_symbol,column,row)
+            totalSymbols += 1
+
+        if totalSymbols >= 5:
+            check_1 = checkForWinnerRow(board)
+            check_2 = checkForWinnerColumn(board)
+            check_3 = checkForWinnerDiagonal(board)
+            check_4 = checkForWinnerOtherDiagonal(board)
+            if check_1 or check_2 or check_3 or check_4:
+                print("The winner is" + winner)
+                print_board(board)
+                break 
+     ###print(board)  
+        print_board(board)
+    if totalSymbols == 9:
+        print("It's a tie!!")
 
 #def expert_ai():
     # Attempts to set up completion attempts as well as preemptivly block completion attempts as well as addressing obvious completions and blocks
@@ -277,9 +379,9 @@ if game_type == "b" or game_type == "B":
 if game_type == "i" or game_type == "I":
     print("Ready to get started? X will be going first.")
     intermediate_ai()
-#if game_type == "a" or game_type == "A":
-    #print("Ready to get started? X will be going first.")
-    #advanced_ai()
+if game_type == "a" or game_type == "A":
+    print("Ready to get started? X will be going first.")
+    advanced_ai()
 #if game_type == "e" or game_type == "E":
     #print("Ready to get started? X will be going first.")
     #expert_ai()
