@@ -119,6 +119,19 @@ def check_diagonal_for_block(board):
         blocker_row = space_id + 1
         blocker_column = space_id + 1
 
+def check_other_diagonal_for_block(board):
+    global blocker_column
+    global blocker_row
+    diagonal_list = []
+    z = 2
+    for i in range(3):
+        diagonal_list.append(board[z][i])
+        z -= 1
+    if diagonal_list.count("X") == 2 and diagonal_list.count("?") > 0:
+        space_id = diagonal_list.index("?")
+        blocker_row = 3 - space_id
+        blocker_column = space_id + 1
+
 def pvp_gameplay():
     global totalSymbols
     while totalSymbols <= 9:
@@ -198,6 +211,7 @@ def intermediate_ai():
         else:
             check_row_for_block(board)
             check_diagonal_for_block(board)
+            check_other_diagonal_for_block(board)
             print(blocker_column)
             print(blocker_row)
             if blocker_column is not None:
