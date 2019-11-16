@@ -143,9 +143,9 @@ def check_column_for_block(board):
     while current_column < board_size:    
         for row in board:
             column_list.append(row[current_column])
-            if column_list.count("X") > 2 and column_list.count("?") > 0:
-                blocker_column = column_list.index("?")
-                blocker_row = current_row
+            if column_list.count("X") == 2 and column_list.count("?") > 0:
+                blocker_column = current_row + 1
+                blocker_row = column_list.index("?") + 1     
         column_list = []
         current_column += 1
         current_row += 1
@@ -193,7 +193,7 @@ def check_column_to_win(board):
     while current_column < board_size:    
         for row in board:
             column_list.append(row[current_column])
-            if column_list.count("O") > 2 and column_list.count("?") > 0:
+            if column_list.count("O") == 2 and column_list.count("?") > 0:
                 win_column = column_list.index("?")
                 win_row = current_row
         column_list = []
@@ -320,6 +320,8 @@ def advanced_ai():
     global totalSymbols
     global blocker_column
     global blocker_row
+    global win_column
+    global win_row
 
     while totalSymbols < 9:
         if totalSymbols % 2 == 0:
@@ -338,6 +340,10 @@ def advanced_ai():
             check_diagonal_for_block(board)
             check_other_diagonal_for_block(board)
             check_column_for_block(board)
+            print(win_column)
+            print(win_row)
+            print(blocker_column)
+            print(blocker_row)
             if win_column is not None:
                 place("O", win_column, win_row) 
             elif blocker_column is not None:
