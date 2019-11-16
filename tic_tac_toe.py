@@ -202,7 +202,7 @@ def check_column_to_win(board):
 
 def pvp_gameplay():
     global totalSymbols
-    while totalSymbols <= 9:
+    while totalSymbols < 9:
         row, column, current_symbol = getInputs()
 
         while board[row - 1][column - 1] != "?":
@@ -220,6 +220,8 @@ def pvp_gameplay():
             check_4 = checkForWinnerOtherDiagonal(board)
             if check_1 or check_2 or check_3 or check_4:
                 print("The winner is" + winner)
+                print_board(board)
+
                 break
     ###print(board)
         print_board(board)
@@ -229,7 +231,7 @@ def pvp_gameplay():
 def beginner_ai():
     # Generates random moves
     global totalSymbols
-    while totalSymbols <= 9:
+    while totalSymbols < 9:
         if totalSymbols % 2 == 0:
             row, column, current_symbol = getInputs()
             current_symbol = "X"
@@ -256,6 +258,7 @@ def beginner_ai():
             check_4 = checkForWinnerOtherDiagonal(board)
             if check_1 or check_2 or check_3 or check_4:
                 print("The winner is" + winner)
+                print_board(board)
                 break
      ###print(board)
         print_board(board)
@@ -268,7 +271,7 @@ def intermediate_ai():
     global blocker_column
     global blocker_row
 
-    while totalSymbols <= 9:
+    while totalSymbols < 9:
         if totalSymbols % 2 == 0:
             row, column, current_symbol = getInputs()
             current_symbol = "X"
@@ -304,6 +307,8 @@ def intermediate_ai():
             check_4 = checkForWinnerOtherDiagonal(board)
             if check_1 or check_2 or check_3 or check_4:
                 print("The winner is" + winner)
+                print_board(board)
+
                 break 
      ###print(board)  
         print_board(board)
@@ -316,7 +321,7 @@ def advanced_ai():
     global blocker_column
     global blocker_row
 
-    while totalSymbols <= 9:
+    while totalSymbols < 9:
         if totalSymbols % 2 == 0:
             row, column, current_symbol = getInputs()
             current_symbol = "X"
