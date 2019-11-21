@@ -38,6 +38,7 @@ class Game:
         self.current_turn = None
         self.board = Board()
     
+    # Game Setup
     def get_game_type(self):
         self.game_type = input("Which game would you like to play? PvP (P) / Beginner (B) / Intermediate (I) / Advanced (A) / Expert (E): ")
         while self.game_type not in ["p","P","b","B","i","I","a","A","e","E"]:
@@ -72,12 +73,13 @@ class Game:
         if self.game_type == "b" or self.game_type == "B":
             self.play_game("B")
         if self.game_type == "i" or self.game_type == "I":
-            intermediate_ai()
+            self.play_game("I")
         if self.game_type == "a" or self.game_type == "A":
             advanced_ai()
         #if game_type == "e" or game_type == "E":
             #expert_ai()
   
+    # Game Play Helper Methods
     def getInputs(self):
         row = int(input("What row would you like? (1-3) "))
         while row == 0 or row > 3:
@@ -86,19 +88,107 @@ class Game:
         while column == 0 or column > 3:
             column = int(input("That column is out of range. Please enter row 1, 2, or 3: "))
         return row - 1, column - 1 
-
+   
     def random_slot_generation(self):
         x = randint(0,2)
         y = randint(0,2)
         return x , y 
 
+    def get_computer_symbol(self):
+        if self.player1.name == "Human":
+            return self.player2.symbol
+        else:
+            return self.player1.symbol
+
+    def get_human_symbol(self):
+        if self.player1.name == "Human":
+            return self.player1.symbol
+        else:
+            return self.player2.symbol
+
+    # Checker Methods
+    def check_row_for_block(self):
+            row_id = 0
+            for row in self.board.board:
+                if row.count(self.get_human_symbol()) == 2 and row.count("?") > 0:
+                    defender = Defense()
+                    defender.row = row_id
+                    defender.column = row.index("?")
+                    return defender
+                row_id += 1
+                    
+    def check_diagonal_for_block(self):
+        diagonal_list = []
+        for i in range(3):
+            diagonal_list.append(self.board.board[i][i])
+        if diagonal_list.count(self.get_human_symbol()) == 2 and diagonal_list.count("?") > 0:
+            defender = Defense()
+            space_id = diagonal_list.index("?")
+            defender.row = space_id
+            defender.column = space_id
+            return defender
+
+    def check_other_diagonal_for_block(self):
+        diagonal_list = []
+        z = 2
+        for i in range(3):
+            diagonal_list.append(self.board.board[z][i])
+            z -= 1
+        if diagonal_list.count(self.get_human_symbol()) == 2 and diagonal_list.count("?") > 0:
+            defender = Defense()
+            space_id = diagonal_list.index("?")
+            defender.row = 2 - space_id
+            defender.column = space_id
+            return defender
+
+    def check_column_for_block(self):
+        current_column = 0
+        current_row = 0
+        column_list = []
+        while current_column < 3:    
+            for row in self.board.board:
+                column_list.append(row[current_column])
+                if column_list.count(self.get_human_symbol()) == 2 and column_list.count("?") > 0:
+                    defender = Defense()
+                    defender.column = current_row
+                    defender.row = column_list.index("?")
+                    return defender
+        
+            column_list = []
+            current_column += 1
+            current_row += 1
+    
+    # Game AIs
     def beginner_ai(self):
         # Generates random moves
         row, column = self.random_slot_generation()
         while self.board.board[row][column] != "?":
             row, column = self.random_slot_generation()
-        return row, column             
+        return row, column 
 
+    def intermediate_ai(self):
+        # Defensively blocks opponent completion
+        blockers = []
+        blockers.append(self.check_row_for_block())
+        blockers.append(self.check_diagonal_for_block())
+        blockers.append(self.check_other_diagonal_for_block())
+        blockers.append(self.check_column_for_block())
+        print(blockers)
+        print(self.board.board)
+
+        if blockers.count(None) != 4:
+            success = False
+            for i in range(4):
+                if blockers[i] and success == False:
+                    success = True
+                    print(blockers[i].row)
+                    print(blockers[i].column)
+                    return blockers[i].row , blockers[i].column
+
+        else:
+            return self.beginner_ai()
+
+    # Game Play        
     def play_game(self, ai):
         row = None
         column = None
@@ -109,7 +199,8 @@ class Game:
                     print("That spot is already taken...")
                     row, column = self.getInputs()
             else:
-                row, column = self.beginner_ai()
+                #row, column = self.beginner_ai()
+                row, column = self.intermediate_ai()
 
             self.board.place(self.current_turn.symbol,column,row)
             self.board.totalSymbols += 1
@@ -164,59 +255,6 @@ def pvp_gameplay():
                 print("The winner is" + winner)
                 game_board.print_board()
                 break
-        game_board.print_board()
-    if game_board.totalSymbols == 9:
-        print("It's a tie!!")
-
-def intermediate_ai():
-    # Defensively blocks opponent completion
-    game_board = Board()
-
-    while game_board.totalSymbols < 9:
-        if game_board.totalSymbols % 2 == 0:
-            row, column = getInputs()
-            current_symbol = "X"
-
-            while game_board.board[row - 1][column - 1] != "?":
-                print("That spot is already taken...")
-                row, column = getInputs()
-                current_symbol = "X"
-        else:
-            blockers = []
-            blockers.append(check_row_for_block(game_board))
-            blockers.append(check_diagonal_for_block(game_board))
-            blockers.append(check_other_diagonal_for_block(game_board))
-            blockers.append(check_column_for_block(game_board))
-
-            if blockers.count(None) != 4:
-                success = False
-                for i in range(4):
-                    if blockers[i] and success == False:
-                        game_board.place("O", blockers[i].column, blockers[i].row)
-                        game_board.totalSymbols += 1
-                        success = True
-
-            else:
-                row, column = random_slot_generation()
-                current_symbol = "O" 
-                while game_board.board[row][column] != "?":
-                    row, column = random_slot_generation()
-                    current_symbol = "O"
-            
-        if game_board.board[row - 1][column - 1] == "?":
-            game_board.place(current_symbol,column,row)
-            game_board.totalSymbols += 1
-
-        if game_board.totalSymbols >= 5:
-            check_1 = checkForWinnerRow(game_board)
-            check_2 = checkForWinnerColumn(game_board)
-            check_3 = checkForWinnerDiagonal(game_board)
-            check_4 = checkForWinnerOtherDiagonal(game_board)
-
-            if check_1 or check_2 or check_3 or check_4:
-                print("The winner is" + winner)
-                game_board.print_board() 
-                break 
         game_board.print_board()
     if game_board.totalSymbols == 9:
         print("It's a tie!!")
@@ -291,6 +329,10 @@ def advanced_ai():
     # Perfect play, always at least draws
 
 ## Beginning of checks ##
+
+
+
+
 def checkForWinnerRow(board):
     global winner
     for row in board.board:
@@ -300,27 +342,6 @@ def checkForWinnerRow(board):
         elif row.count("O") == 3:
             winner = " O"
             return True
-
-def check_row_for_block(board):
-    row_id = 0
-    for row in board.board:
-        row_id += 1
-        if row.count("X") == 2 and row.count("?") > 0:
-            defender = Defense()
-            defender.row = row_id
-            defender.column = row.index("?") + 1
-            return defender
-
-def check_row_to_win(board):
-    row_id = 0
-    for row in board.board:
-        row_id += 1
-        if row.count("O") == 2 and row.count("?") > 0:
-            offense = Offense()
-            offense.row = row_id
-            offense.column = row.index("?") + 1
-            return offense
-
 
 def checkForWinnerColumn(board):
     global winner
@@ -378,47 +399,15 @@ def checkForWinnerOtherDiagonal(board):
         return True
 
 
-def check_diagonal_for_block(board):
-    diagonal_list = []
-    for i in range(3):
-        diagonal_list.append(board.board[i][i])
-    if diagonal_list.count("X") == 2 and diagonal_list.count("?") > 0:
-        defender = Defense()
-        space_id = diagonal_list.index("?")
-        defender.row = space_id + 1
-        defender.column = space_id + 1
-        return defender
-
-def check_other_diagonal_for_block(board):
-    diagonal_list = []
-    z = 2
-    for i in range(3):
-        diagonal_list.append(board.board[z][i])
-        z -= 1
-    if diagonal_list.count("X") == 2 and diagonal_list.count("?") > 0:
-        defender = Defense()
-        space_id = diagonal_list.index("?")
-        defender.row = 3 - space_id
-        defender.column = space_id + 1
-        return defender
-
-def check_column_for_block(board):
-    current_column = 0
-    current_row = 0
-    column_list = []
-    while current_column < 3:    
-        for row in board.board:
-            column_list.append(row[current_column])
-            if column_list.count("X") == 2 and column_list.count("?") > 0:
-                defender = Defense()
-                defender.column = current_row + 1
-                defender.row = column_list.index("?") + 1
-                return defender
-     
-        column_list = []
-        current_column += 1
-        current_row += 1
-
+def check_row_to_win(board):
+    row_id = 0
+    for row in board.board:
+        row_id += 1
+        if row.count("O") == 2 and row.count("?") > 0:
+            offense = Offense()
+            offense.row = row_id
+            offense.column = row.index("?") + 1
+            return offense
 
 def check_diagonal_to_win(board):
     diagonal_list = []
