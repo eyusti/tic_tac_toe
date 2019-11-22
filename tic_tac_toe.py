@@ -62,13 +62,17 @@ class Game:
             else:
                 self.player1 = Player(1,"Computer","X")
                 self.player2 = Player(2,"Human","O")
-            self.current_turn = self.player1        
+            self.current_turn = self.player1
+        if self.game_type in ["p","P"]:
+            self.player1 = Player(1,"Human","X")
+            self.player2 = Player(2,"Human","O")
+            self.current_turn = self.player1 
 
     def select_game(self):
         print("Ready to get started? X will be going first.")
 
         if self.game_type == "p" or self.game_type == "P":
-            pvp_gameplay()
+            self.play_game("P")
         if self.game_type == "b" or self.game_type == "B":
             self.play_game("B")
         if self.game_type == "i" or self.game_type == "I":
@@ -294,35 +298,6 @@ class Game:
         new_game.get_game_type()
         new_game.player_setup()
         new_game.select_game()
-
-def pvp_gameplay():
-    game_board = Board()
-
-    while game_board.totalSymbols < 9:
-        row, column = getInputs()
-        current_symbol = game_board.symbolSelector()
-
-        while game_board.board[row - 1][column - 1] != "?":
-            print("That spot is already taken...")
-            row, column = getInputs()
-            current_symbol = game_board.symbolSelector()
-
-        if game_board.board[row - 1][column - 1] == "?":
-            game_board.place(current_symbol,column,row)
-            game_board.totalSymbols += 1
-
-        if game_board.totalSymbols >= 5:
-            check_1 = checkForWinnerRow(game_board)
-            check_2 = checkForWinnerColumn(game_board)
-            check_3 = checkForWinnerDiagonal(game_board)
-            check_4 = checkForWinnerOtherDiagonal(game_board)
-            if check_1 or check_2 or check_3 or check_4:
-                print("The winner is" + winner)
-                game_board.print_board()
-                break
-        game_board.print_board()
-    if game_board.totalSymbols == 9:
-        print("It's a tie!!")
 
 #def expert_ai():
     # Perfect play, always at least draws
