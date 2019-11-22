@@ -226,7 +226,6 @@ class Game:
         blockers.append(self.check_diagonal_for_block())
         blockers.append(self.check_other_diagonal_for_block())
         blockers.append(self.check_column_for_block())
-        print(blockers)
 
         if blockers.count(None) != 4:
             success = False
@@ -245,8 +244,7 @@ class Game:
         offensives.append(self.check_diagonal_to_win())
         offensives.append(self.check_other_diagonal_to_win())
         offensives.append(self.check_column_to_win())
-        print(offensives)
-
+        
         if offensives.count(None) != 4:
             success = False
             for i in range(4):
@@ -267,9 +265,12 @@ class Game:
                     print("That spot is already taken...")
                     row, column = self.getInputs()
             else:
-                #row, column = self.beginner_ai()
-                #row, column = self.intermediate_ai()
-                row, column = self.advanced_ai()
+                if ai == "B":
+                    row, column = self.beginner_ai()
+                elif ai == "I":
+                    row, column = self.intermediate_ai()
+                elif ai == "A":
+                    row, column = self.advanced_ai()
 
             self.board.place(self.current_turn.symbol,column,row)
             self.board.totalSymbols += 1
