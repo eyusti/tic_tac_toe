@@ -40,47 +40,33 @@ class Game:
     
     # Game Setup
     def get_game_type(self):
-        self.game_type = input("Which game would you like to play? PvP (P) / Beginner (B) / Intermediate (I) / Advanced (A) / Expert (E): ")
-        while self.game_type not in ["p","P","b","B","i","I","a","A","e","E"]:
+        self.game_type = input("Which game would you like to play? PvP (P) / Beginner (B) / Intermediate (I) / Advanced (A) / Expert (E): ").upper()
+        while self.game_type not in ["P","B","I","A","E"]:
             print("That is an invalid option. Please select again")
-            self.game_type = input("Which game would you like to play? PvP (P) / Beginner (B) / Intermediate (I) / Advanced (A) / Expert (E): ")
+            self.game_type = input("Which game would you like to play? PvP (P) / Beginner (B) / Intermediate (I) / Advanced (A) / Expert (E): ").upper()
     
     def get_order(self):
-        if self.game_type not in ["p","P"]:
-            order = input("Would you like to go first (F) or second (S)?: ")
-            while order not in ["f","F","s","S"]:
+        if self.game_type not in ["P"]:
+            order = input("Would you like to go first (F) or second (S)?: ").upper()
+            while order not in ["F","S"]:
                 print("That is an invalid option. Please select again")
-                order = input("Would you like to go first (F) or second (S)?: ")
+                order = input("Would you like to go first (F) or second (S)?: ").upper()
             return order
     
     def player_setup(self):
-        if self.game_type in ["b","B","i","I","a","A","e","E"]:
+        if self.game_type in ["B","I","A","E"]:
             order = self.get_order()
-            if order == "f" or order == "F":
+            if order == "F":
                 self.player1 = Player(1,"Human","X")
                 self.player2 = Player(2,"Computer","O")
             else:
                 self.player1 = Player(1,"Computer","X")
                 self.player2 = Player(2,"Human","O")
             self.current_turn = self.player1
-        if self.game_type in ["p","P"]:
+        if self.game_type in ["P"]:
             self.player1 = Player(1,"Human","X")
             self.player2 = Player(2,"Human","O")
             self.current_turn = self.player1 
-
-    def select_game(self):
-        print("Ready to get started? X will be going first.")
-
-        if self.game_type == "p" or self.game_type == "P":
-            self.play_game("P")
-        if self.game_type == "b" or self.game_type == "B":
-            self.play_game("B")
-        if self.game_type == "i" or self.game_type == "I":
-            self.play_game("I")
-        if self.game_type == "a" or self.game_type == "A":
-            self.play_game("A")
-        #if game_type == "e" or game_type == "E":
-            #expert_ai()
   
     # Game Play Helper Methods
     def getInputs(self):
@@ -145,22 +131,16 @@ class Game:
             return defender
 
     def check_column_for_block(self):
-        current_column = 0
-        current_row = 0
-        column_list = []
-        while current_column < 3:    
+        for current_column in range(3):  
+            column_list = []
             for row in self.board.board:
                 column_list.append(row[current_column])
-                if column_list.count(self.get_human_symbol()) == 2 and column_list.count("?") > 0:
-                    defender = Defense()
-                    defender.column = current_row
-                    defender.row = column_list.index("?")
-                    return defender
-        
-            column_list = []
-            current_column += 1
-            current_row += 1
-    
+            if column_list.count(self.get_human_symbol()) == 2 and column_list.count("?") > 0:
+                defender = Defense()
+                defender.column = current_column
+                defender.row = column_list.index("?")
+                return defender
+
     def check_row_to_win(self):
         row_id = 0
         for row in self.board.board:
@@ -196,20 +176,15 @@ class Game:
             return offense
 
     def check_column_to_win(self):
-        current_column = 0
-        current_row = 0
-        column_list = []
-        while current_column < 3:    
+        for current_column in range(3):    
+            column_list = []
             for row in self.board.board:
                 column_list.append(row[current_column])
-                if column_list.count(self.get_computer_symbol()) == 2 and column_list.count("?") > 0:
-                    offense = Offense()
-                    offense.column = column_list.index("?")
-                    offense.row = current_row
-                    return offense
-            column_list = []
-            current_column += 1
-            current_row += 1
+            if column_list.count(self.get_computer_symbol()) == 2 and column_list.count("?") > 0:
+                offense = Offense()
+                offense.column = current_column
+                offense.row = column_list.index("?")
+                return offense            
 
     # Game AIs
     def beginner_ai(self):
@@ -221,43 +196,37 @@ class Game:
 
     def intermediate_ai(self):
         # Defensively blocks opponent completion
-        blockers = []
-        blockers.append(self.check_row_for_block())
-        blockers.append(self.check_diagonal_for_block())
-        blockers.append(self.check_other_diagonal_for_block())
-        blockers.append(self.check_column_for_block())
+        blockers = [
+            self.check_row_for_block(),
+            self.check_diagonal_for_block(),
+            self.check_other_diagonal_for_block(),
+            self.check_column_for_block()
+        ]
 
-        if blockers.count(None) != 4:
-            success = False
-            for i in range(4):
-                if blockers[i] and success == False:
-                    success = True
-                    return blockers[i].row , blockers[i].column
-
-        else:
-            return self.beginner_ai()
+        for blocker in blockers:
+            if blocker is not None:
+                return blocker.row, blocker.column
+        return self.beginner_ai()
 
     def advanced_ai(self):
         # Actively looks for completions for wins and defensively blocks opponent completions
-        offensives = []
-        offensives.append(self.check_row_to_win())
-        offensives.append(self.check_diagonal_to_win())
-        offensives.append(self.check_other_diagonal_to_win())
-        offensives.append(self.check_column_to_win())
-        
-        if offensives.count(None) != 4:
-            success = False
-            for i in range(4):
-                if offensives[i] and success == False:
-                    success = True  
-                    return  offensives[i].column, offensives[i].row   
-        else:
-            return self.intermediate_ai() 
+        offensives = [
+            self.check_row_to_win(),
+            self.check_diagonal_to_win(),
+            self.check_other_diagonal_to_win(),
+            self.check_column_to_win()
+        ]
+
+        for offense in offensives:
+            if offense is not None:
+                return offense.row, offense.column  
+
+        return self.intermediate_ai() 
 
     # Game Play        
     def play_game(self, ai):
-        row = None
-        column = None
+        print("Ready to get started? X will be going first.")
+
         while self.board.totalSymbols < 9:
             if self.current_turn.name == "Human":
                 row, column = self.getInputs()
@@ -298,7 +267,7 @@ class Game:
     def execute_game(self):
         new_game.get_game_type()
         new_game.player_setup()
-        new_game.select_game()
+        new_game.play_game(self.game_type)
 
 #def expert_ai():
     # Perfect play, always at least draws
