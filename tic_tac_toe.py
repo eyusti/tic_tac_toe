@@ -1,5 +1,4 @@
 from random import randint
-winner = None
 
 class Board:
     def __init__(self):
@@ -12,6 +11,76 @@ class Board:
 
     def print_board(self):
         print("\n {0} | {1} | {2} \n _________ \n {3} | {4} | {5} \n _________ \n {6} | {7} | {8} \n".format(self.board[0][0],self.board[0][1],self.board[0][2],self.board[1][0],self.board[1][1],self.board[1][2],self.board[2][0],self.board[2][1],self.board[2][2]))
+    
+    ## Game winning checks ##
+
+    def checkForWinnerRow(self):
+        for row in self.board:
+            if row.count("X") == 3:
+                return "X" 
+            elif row.count("O") == 3:
+                return "O"
+
+    def checkForWinnerColumn(self):
+        x_total = 0
+        o_total = 0
+        current_column = 0
+        while current_column < 3:    
+            for row in self.board:
+                if row[current_column] == "X":
+                    x_total += 1
+                if row[current_column] == "O":
+                    o_total += 1
+            if x_total == 3:
+                return "X"
+            if o_total == 3:
+                return "O"
+            o_total = 0
+            x_total = 0 
+            current_column += 1
+
+    def checkForWinnerDiagonal(self):
+        o_total = 0
+        x_total = 0
+        for i in range(3):
+            if self.board[i][i] == "X":
+                x_total += 1
+            if self.board[i][i] == "O":
+                o_total += 1
+        if o_total == 3:
+            return "O"
+        if x_total == 3:
+            return "X"
+
+    def checkForWinnerOtherDiagonal(self):
+        o_total = 0
+        x_total = 0
+        z = 3
+        for i in range(3):
+            z -= 1
+            if self.board[i][z] == "X":
+                x_total += 1
+            if self.board[i][z] == "O":
+                o_total += 1
+        if o_total == 3:
+            return "O"
+        if x_total == 3:
+            return "X"
+
+    def provide_winner(self):
+        winner = self.checkForWinnerRow() or self.checkForWinnerColumn() or self.checkForWinnerDiagonal() or self.checkForWinnerOtherDiagonal()
+        total_symbols = 0
+
+        if winner:
+            return winner
+
+        for i in range(3):
+            total_symbols += self.board[i].count("X")
+            total_symbols += self.board[i].count("O")    
+
+        if total_symbols == 9:
+            winner = "tie"
+            return winner
 
 class Defense:
     def __init__(self):
@@ -222,12 +291,35 @@ class Game:
                 return offense.row, offense.column  
 
         return self.intermediate_ai() 
+    
+    def expert_ai(self):
+        #Perfect play, always at least draws
+        winner = self.board.provide_winner()
+        if winner:
+            if winner == "tie"
+                return 0
+            if winner == self.get_computer_symbol():
+                return 1
+            else:
+                return -1
+       
+        """
+        check if game is won
+            return winner , row , column
+
+        get all possible moves
+        
+        find the min of all possible moves
+
+        return -min(all possible moves), row, column
+        """
 
     # Game Play        
     def play_game(self, ai):
         print("Ready to get started? X will be going first.")
+        winner = None
 
-        while self.board.totalSymbols < 9:
+        while not winner:
             if self.current_turn.name == "Human":
                 row, column = self.getInputs()
                 while self.board.board[row][column] != "?":
@@ -242,102 +334,26 @@ class Game:
                     row, column = self.advanced_ai()
 
             self.board.place(self.current_turn.symbol,column,row)
-            self.board.totalSymbols += 1
+            self.board.print_board()
 
             if self.current_turn.order == 1:
                 self.current_turn = self.player2
             else:
                 self.current_turn = self.player1
 
-            if self.board.totalSymbols >= 5:
-                check_1 = checkForWinnerRow(self.board)
-                check_2 = checkForWinnerColumn(self.board)
-                check_3 = checkForWinnerDiagonal(self.board)
-                check_4 = checkForWinnerOtherDiagonal(self.board)
-
-                if check_1 or check_2 or check_3 or check_4:
-                    print("The winner is" + winner)
-                    self.board.print_board()
+            winner = self.board.provide_winner()
+            if winner:
+                if winner == "X" or winner == "O":
+                    print("The winner is " + winner)
                     break
-            self.board.print_board()
-
-        if self.board.totalSymbols == 9:
-            print("It's a tie!!")
+                if winner == "tie":
+                    print("It's a " + winner)
+                    break
 
     def execute_game(self):
         new_game.get_game_type()
         new_game.player_setup()
         new_game.play_game(self.game_type)
-
-#def expert_ai():
-    # Perfect play, always at least draws
-
-## Game winning checks ##
-
-def checkForWinnerRow(board):
-    global winner
-    for row in board.board:
-        if row.count("X") == 3:
-            winner = " X"
-            return True 
-        elif row.count("O") == 3:
-            winner = " O"
-            return True
-
-def checkForWinnerColumn(board):
-    global winner
-    x_total = 0
-    o_total = 0
-    current_column = 0
-    while current_column < 3:    
-        for row in board.board:
-            if row[current_column] == "X":
-                x_total += 1
-            if row[current_column] == "O":
-                o_total += 1
-        if x_total == 3:
-            winner = " X"
-            return True
-        if o_total == 3:
-            winner = " O"
-            return True
-        o_total = 0
-        x_total = 0 
-        current_column += 1
-
-def checkForWinnerDiagonal(board):
-    global winner
-    o_total = 0
-    x_total = 0
-    for i in range(3):
-        if board.board[i][i] == "X":
-            x_total += 1
-        if board.board[i][i] == "O":
-            o_total += 1
-    if o_total == 3:
-        winner = " O"
-        return True
-    if x_total == 3:
-        winner = " X"
-        return True
-
-def checkForWinnerOtherDiagonal(board):
-    global winner
-    o_total = 0
-    x_total = 0
-    z = 3
-    for i in range(3):
-        z -= 1
-        if board.board[i][z] == "X":
-            x_total += 1
-        if board.board[i][z] == "O":
-            o_total += 1
-    if o_total == 3:
-        winner = " O"
-        return True
-    if x_total == 3:
-        winner = " X"
-        return True
 
 ## Beginning of game play ##
 print("Welcome to tic-tac-toe!")
