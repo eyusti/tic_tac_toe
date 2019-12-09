@@ -296,8 +296,8 @@ class Game:
         #Perfect play, always at least draws
         winner = self.board.provide_winner()
         if winner:
-            if winner == "tie"
-                return 0
+            if winner == "tie":
+                return 0 
             if winner == self.get_computer_symbol():
                 return 1
             else:
@@ -332,6 +332,8 @@ class Game:
                     row, column = self.intermediate_ai()
                 elif ai == "A":
                     row, column = self.advanced_ai()
+                elif ai == "E":
+                    row, column = self.expert_ai()
 
             self.board.place(self.current_turn.symbol,column,row)
             self.board.print_board()
