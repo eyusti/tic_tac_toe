@@ -1,4 +1,5 @@
 from random import randint
+import copy
 
 class Board:
     def __init__(self):
@@ -164,6 +165,16 @@ class Game:
         else:
             return self.player2.symbol
 
+    def get_all_moves(self):
+        list_of_all_moves = []
+        for r in range(3):
+            for c in range(3):
+                if self.board.board[r][c] == "?":
+                    new_move = copy.deepcopy(self.board)
+                    new_move.place(self.get_computer_symbol(), c , r)
+                    list_of_all_moves.append(new_move.board)
+        return list_of_all_moves
+
     # Checker Methods
     def check_row_for_block(self):
         row_id = 0
@@ -258,6 +269,7 @@ class Game:
     # Game AIs
     def beginner_ai(self):
         # Generates random moves
+        #print(*self.get_all_moves(), sep = "\n")
         row, column = self.random_slot_generation()
         while self.board.board[row][column] != "?":
             row, column = self.random_slot_generation()
@@ -302,6 +314,8 @@ class Game:
                 return 1
             else:
                 return -1
+        
+        list_of_moves = self.get_all_moves()
        
         """
         check if game is won
