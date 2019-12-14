@@ -104,15 +104,10 @@ class Board:
                     return False
         return True
 
-class Defense:
+class Place:
     def __init__(self):
         self.row = None
         self.column = None
-
-class Offense:
-    def __init__(self):
-        self.column = None
-        self.row = None
 
 class Player:
     def __init__(self, order, name, symbol):
@@ -191,7 +186,7 @@ class Game:
         row_id = 0
         for row in self.board.board:
             if row.count(self.get_human_symbol()) == 2 and row.count("?") > 0:
-                defender = Defense()
+                defender = Place()
                 defender.row = row_id
                 defender.column = row.index("?")
                 return defender
@@ -202,7 +197,7 @@ class Game:
         for i in range(3):
             diagonal_list.append(self.board.board[i][i])
         if diagonal_list.count(self.get_human_symbol()) == 2 and diagonal_list.count("?") > 0:
-            defender = Defense()
+            defender = Place()
             space_id = diagonal_list.index("?")
             defender.row = space_id
             defender.column = space_id
@@ -215,7 +210,7 @@ class Game:
             diagonal_list.append(self.board.board[z][i])
             z -= 1
         if diagonal_list.count(self.get_human_symbol()) == 2 and diagonal_list.count("?") > 0:
-            defender = Defense()
+            defender = Place()
             space_id = diagonal_list.index("?")
             defender.row = 2 - space_id
             defender.column = space_id
@@ -227,7 +222,7 @@ class Game:
             for row in self.board.board:
                 column_list.append(row[current_column])
             if column_list.count(self.get_human_symbol()) == 2 and column_list.count("?") > 0:
-                defender = Defense()
+                defender = Place()
                 defender.column = current_column
                 defender.row = column_list.index("?")
                 return defender
@@ -236,7 +231,7 @@ class Game:
         row_id = 0
         for row in self.board.board:
             if row.count(self.get_computer_symbol()) == 2 and row.count("?") > 0:
-                offense = Offense()
+                offense = Place()
                 offense.row = row_id
                 offense.column = row.index("?")
                 return offense
@@ -247,7 +242,7 @@ class Game:
         for i in range(3):
             diagonal_list.append(self.board.board[i][i])
         if diagonal_list.count(self.get_computer_symbol()) == 2 and diagonal_list.count("?") > 0:
-            offense = Offense()
+            offense = Place()
             space_id = diagonal_list.index("?")
             offense.row = space_id
             offense.column = space_id
@@ -260,7 +255,7 @@ class Game:
             diagonal_list.append(self.board.board[z][i])
             z -= 1
         if diagonal_list.count(self.get_computer_symbol()) == 2 and diagonal_list.count("?") > 0:
-            offense = Offense()
+            offense = Place()
             space_id = diagonal_list.index("?")
             offense.row = 2 - space_id
             offense.column = space_id
@@ -272,7 +267,7 @@ class Game:
             for row in self.board.board:
                 column_list.append(row[current_column])
             if column_list.count(self.get_computer_symbol()) == 2 and column_list.count("?") > 0:
-                offense = Offense()
+                offense = Place()
                 offense.column = current_column
                 offense.row = column_list.index("?")
                 return offense            
