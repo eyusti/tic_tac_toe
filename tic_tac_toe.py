@@ -7,6 +7,9 @@ class Board:
         self.totalSymbols = 0
         self.player_turn = None
     
+    def __repr__(self):
+        return "{0}|{1}|{2}.{3}|{4}|{5}.{6}|{7}|{8}".format(self.board[0][0],self.board[0][1],self.board[0][2],self.board[1][0],self.board[1][1],self.board[1][2],self.board[2][0],self.board[2][1],self.board[2][2])
+
     def place(self,symbol,column,row):
         self.board[row][column] = symbol
 
@@ -82,6 +85,16 @@ class Board:
         if total_symbols == 9:
             winner = "tie"
             return winner
+
+    def get_all_moves(self, player_symbol):
+        list_of_all_moves = []
+        for r in range(3):
+            for c in range(3):
+                if self.board[r][c] == "?":
+                    new_move = copy.deepcopy(self)
+                    new_move.place(player_symbol, c , r)
+                    list_of_all_moves.append((new_move, r , c))
+        return list_of_all_moves
 
 class Defense:
     def __init__(self):
@@ -164,16 +177,6 @@ class Game:
             return self.player1.symbol
         else:
             return self.player2.symbol
-
-    def get_all_moves(self):
-        list_of_all_moves = []
-        for r in range(3):
-            for c in range(3):
-                if self.board.board[r][c] == "?":
-                    new_move = copy.deepcopy(self.board)
-                    new_move.place(self.get_computer_symbol(), c , r)
-                    list_of_all_moves.append(new_move.board)
-        return list_of_all_moves
 
     # Checker Methods
     def check_row_for_block(self):
@@ -269,7 +272,7 @@ class Game:
     # Game AIs
     def beginner_ai(self):
         # Generates random moves
-        #print(*self.get_all_moves(), sep = "\n")
+        # print(*self.get_all_moves(), sep = "\n")
         row, column = self.random_slot_generation()
         while self.board.board[row][column] != "?":
             row, column = self.random_slot_generation()
@@ -304,29 +307,27 @@ class Game:
 
         return self.intermediate_ai() 
     
-    def expert_ai(self):
+    def expert_ai(self, board_state, player):
         #Perfect play, always at least draws
-        winner = self.board.provide_winner()
+        winner = board_state.provide_winner()
         if winner:
             if winner == "tie":
-                return 0 
-            if winner == self.get_computer_symbol():
-                return 1
+                return 0 , -1 , -1
+            if winner == player:
+                return 1 , -1 , -1
             else:
-                return -1
-        
-        list_of_moves = self.get_all_moves()
-       
-        """
-        check if game is won
-            return winner , row , column
+                return -1 , -1 , -1
 
-        get all possible moves
-        
-        find the min of all possible moves
+        list_of_possible_moves = board_state.get_all_moves(player)
 
-        return -min(all possible moves), row, column
-        """
+        if player == "X":
+            new_player = "O"
+        if player == "O":
+            new_player = "X"
+
+        opponent_worst_move, row, column = min((self.expert_ai(move_board, new_player), r, c) for move_board, r , c in list_of_possible_moves)
+        score, _row, _column = opponent_worst_move
+        return -score , row , column
 
     # Game Play        
     def play_game(self, ai):
@@ -347,7 +348,7 @@ class Game:
                 elif ai == "A":
                     row, column = self.advanced_ai()
                 elif ai == "E":
-                    row, column = self.expert_ai()
+                    _score, row, column = self.expert_ai(self.board, self.current_turn.symbol)
 
             self.board.place(self.current_turn.symbol,column,row)
             self.board.print_board()
