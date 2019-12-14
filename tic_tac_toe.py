@@ -1,10 +1,10 @@
 from random import randint
 import copy
+import unittest
 
 class Board:
     def __init__(self):
         self.board = [["?","?","?"],["?","?","?"],["?","?","?"]]
-        self.totalSymbols = 0
         self.player_turn = None
     
     def __repr__(self):
@@ -71,6 +71,7 @@ class Board:
         if x_total == 3:
             return "X"
 
+    ## Helper methods ##
     def provide_winner(self):
         winner = self.checkForWinnerRow() or self.checkForWinnerColumn() or self.checkForWinnerDiagonal() or self.checkForWinnerOtherDiagonal()
         total_symbols = 0
@@ -95,6 +96,13 @@ class Board:
                     new_move.place(player_symbol, c , r)
                     list_of_all_moves.append((new_move, r , c))
         return list_of_all_moves
+
+    def is_board_empty(self):
+        for r in range(3):
+            for c in range(3):
+                if self.board[r][c] != "?":
+                    return False
+        return True
 
 class Defense:
     def __init__(self):
@@ -309,6 +317,10 @@ class Game:
     
     def expert_ai(self, board_state, player):
         #Perfect play, always at least draws
+        if board_state.is_board_empty():
+            row, column = self.beginner_ai()
+            return 0 , row, column
+
         winner = board_state.provide_winner()
         if winner:
             if winner == "tie":
@@ -372,13 +384,11 @@ class Game:
         new_game.player_setup()
         new_game.play_game(self.game_type)
 
-## Beginning of game play ##
-print("Welcome to tic-tac-toe!")
-new_game = Game()
-new_game.execute_game()
-
-
-
+if __name__ == '__main__':
+    ## Beginning of game play ##
+    print("Welcome to tic-tac-toe!")
+    new_game = Game()
+    new_game.execute_game()
 
 
 
