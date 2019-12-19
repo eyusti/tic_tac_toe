@@ -126,17 +126,32 @@ class Game:
     
     # Game Setup
     def get_game_type(self):
-        self.game_type = input("Which game would you like to play? PvP (P) / Beginner (B) / Intermediate (I) / Advanced (A) / Expert (E): ").upper()
-        while self.game_type not in ["P","B","I","A","E"]:
-            print("That is an invalid option. Please select again")
-            self.game_type = input("Which game would you like to play? PvP (P) / Beginner (B) / Intermediate (I) / Advanced (A) / Expert (E): ").upper()
+        while True:
+            try:
+                self.game_type = input("Which game would you like to play? PvP (P) / Beginner (B) / Intermediate (I) / Advanced (A) / Expert (E): ").upper()
+                while self.game_type not in ["P","B","I","A","E"]:
+                    print("That is an invalid option. Please select again")
+                    self.game_type = input("Which game would you like to play? PvP (P) / Beginner (B) / Intermediate (I) / Advanced (A) / Expert (E): ").upper()
+            except ValueError:
+                print("That is an invalid option. Please select again")
+                continue
+            else:
+                break        
     
     def get_order(self):
         if self.game_type not in ["P"]:
-            order = input("Would you like to go first (F) or second (S)?: ").upper()
-            while order not in ["F","S"]:
-                print("That is an invalid option. Please select again")
-                order = input("Would you like to go first (F) or second (S)?: ").upper()
+            while True:
+                try:
+                    order = input("Would you like to go first (F) or second (S)?: ").upper()
+                    while order not in ["F","S"]:
+                        print("That is an invalid option. Please select again")
+                        order = input("Would you like to go first (F) or second (S)?: ").upper()
+                except ValueError:
+                    print("That is an invalid option. Please select again")
+                    continue
+                else:
+                    break
+
             return order
     
     def player_setup(self):
@@ -156,12 +171,28 @@ class Game:
   
     # Game Play Helper Methods
     def getInputs(self):
-        row = int(input("What row would you like? (1-3) "))
-        while row == 0 or row > 3:
-            row = int(input("That row is out of range. Please enter row 1, 2, or 3: "))
-        column = int(input("What column would you like? (1-3) "))
-        while column == 0 or column > 3:
-            column = int(input("That column is out of range. Please enter row 1, 2, or 3: "))
+        while True:
+            try:
+                row = int(input("What row would you like? (1-3) "))
+                while row == 0 or row > 3:
+                    row = int(input("That row is out of range. Please enter row 1, 2, or 3: "))
+            except ValueError:
+                print("That is an invalid input")
+                continue
+            else:
+                break
+        
+        while True:
+            try:
+                column = int(input("What column would you like? (1-3) "))
+                while column == 0 or column > 3:
+                    column = int(input("That column is out of range. Please enter row 1, 2, or 3: "))
+            except ValueError:
+                print("That is an invalid input")
+                continue
+            else:
+                break
+
         return row - 1, column - 1 
    
     def random_slot_generation(self):
