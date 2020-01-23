@@ -1,10 +1,19 @@
+import pytest
 from tic_tac_toe import Board, Game
 
-def test_expert_ai_blocks_obvious_threat():
-    board = Board()
-    game = Game()
-    board.board = [["?", "?", "?"],["?", "O", "X"], [ "X", "?", "O"]]
-    score, row, column = game.expert_ai(board, "X")
-    assert(row == 0)
-    assert(column == 0)
-    assert(score == 0)
+def inc(x):
+    return x + 1
+
+counts={}
+names={}
+for line in sys.stdin.readlines():
+    sp = line.split()
+    if counts[sp[0]] is not None:
+        counts[sp[0]] = counts[sp[0]] + 1
+    else:
+        ... = 1
+    names[sp[0]] = names[sp[0]].append(sp[1])
+
+
+def test_answer():
+    assert inc(3) == 5

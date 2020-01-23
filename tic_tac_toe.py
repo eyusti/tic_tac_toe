@@ -1,4 +1,5 @@
 from random import randint
+import math
 import copy
 import unittest
 
@@ -14,7 +15,13 @@ class Board:
         self.board[row][column] = symbol
 
     def print_board(self):
-        print("\n {0} | {1} | {2} \n _________ \n {3} | {4} | {5} \n _________ \n {6} | {7} | {8} \n".format(self.board[0][0],self.board[0][1],self.board[0][2],self.board[1][0],self.board[1][1],self.board[1][2],self.board[2][0],self.board[2][1],self.board[2][2]))
+        print("""
+            {0} | {1} | {2} 
+            _________ 
+            {3} | {4} | {5} 
+            _________ 
+            {6} | {7} | {8} 
+            """.format(self.board[0][0],self.board[0][1],self.board[0][2],self.board[1][0],self.board[1][1],self.board[1][2],self.board[2][0],self.board[2][1],self.board[2][2]))
     
     ## Game winning checks ##
 
@@ -25,23 +32,12 @@ class Board:
             elif row.count("O") == 3:
                 return "O"
 
-    def checkForWinnerColumn(self):
-        x_total = 0
-        o_total = 0
-        current_column = 0
-        while current_column < 3:    
-            for row in self.board:
-                if row[current_column] == "X":
-                    x_total += 1
-                if row[current_column] == "O":
-                    o_total += 1
-            if x_total == 3:
+    def checkForWinnerColumn(self):  
+        for current_column in range(3):
+            if all(row[current_column] == "X" for row in self.board):
                 return "X"
-            if o_total == 3:
+            if all(row[current_column] == "O" for row in self.board):
                 return "O"
-            o_total = 0
-            x_total = 0 
-            current_column += 1
 
     def checkForWinnerDiagonal(self):
         o_total = 0
@@ -342,8 +338,39 @@ class Game:
         return self.intermediate_ai() 
     
     def expert_ai(self, board_state, player):
-        #Perfect play, always at least draws
-        if board_state.is_board_empty():
+        # Perfect play, always at least draws
+        # Minimax implementation
+        winner = board_state.provide_winner()
+        if winner:
+            if winner == "tie":
+                return 0, -8, -8
+            if winner == self.get_computer_symbol():
+                return 1, -8, -8 
+            else:
+                return -1, -8, -8
+        
+        if player == self.get_computer_symbol():
+            maxEval = -math.inf 
+            all_boards = board_state.get_all_moves(self.get_computer_symbol())
+            for board_tuple in all_boards:
+                board,r_row,r_column = board_tuple
+                eval = self.expert_ai(board,self.get_human_symbol())
+                r_eval, _row, _column = eval
+                maxEval = max(maxEval,r_eval)
+            return maxEval, r_row, r_column
+
+        else:
+            minEval = math.inf
+            all_boards = board_state.get_all_moves(self.get_human_symbol())
+            for board_tuple in all_boards:
+                board,r_row,r_column = board_tuple
+                eval = self.expert_ai(board,self.get_computer_symbol())
+                r_eval, _row, _column = eval
+                minEval = min(minEval, r_eval)
+            return minEval, r_row, r_column
+
+        # Initial Negamax implementation
+        """if board_state.is_board_empty():
             row, column = self.beginner_ai()
             return 0 , row, column
 
@@ -365,7 +392,7 @@ class Game:
 
         opponent_worst_move, row, column = min((self.expert_ai(move_board, new_player), r, c) for move_board, r , c in list_of_possible_moves)
         score, _row, _column = opponent_worst_move
-        return -score , row , column
+        return -score , row , column"""
 
     # Game Play        
     def play_game(self, ai):
@@ -385,8 +412,8 @@ class Game:
                     row, column = self.intermediate_ai()
                 elif ai == "A":
                     row, column = self.advanced_ai()
-                elif ai == "E":
-                    _score, row, column = self.expert_ai(self.board, self.current_turn.symbol)
+                #elif ai == "E":
+                    #_score, row, column = self.expert_ai(self.board, self.current_turn.symbol)
 
             self.board.place(self.current_turn.symbol,column,row)
             self.board.print_board()
@@ -414,7 +441,14 @@ if __name__ == '__main__':
     ## Beginning of game play ##
     print("Welcome to tic-tac-toe!")
     new_game = Game()
-    new_game.execute_game()
+    new_board = Board()
+    new_board.board = [["O","O","X"],["X","?","O"],["?","?","X"]]
+    new_game.board = copy.deepcopy(new_board)
+    new_game.player1 = Player(1,"Human", "O")
+    new_game.player2 = Player(2,"Computer", "X")
+    print(new_game.expert_ai(new_game.board,"X"))
+    #new_game.execute_game()
+
 
 
 
