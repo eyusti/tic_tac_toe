@@ -1,5 +1,6 @@
 import pytest
 import copy
+import math
 from tic_tac_toe import Board, Game, Player
 
 def test_minimax():
@@ -9,7 +10,7 @@ def test_minimax():
     new_game.board = new_board
     new_game.player1 = Player(1,"Human", "O")
     new_game.player2 = Player(2,"Computer", "X")
-    assert new_game.expert_ai(new_game.board,"X") == (1,2,1)
+    assert new_game.expert_ai(new_game.board,-math.inf,math.inf,"X") == (1,2,1)
 
 def test_minimax_2():
     new_game = Game()
@@ -21,7 +22,7 @@ def test_minimax_2():
     new_game.board = copy.deepcopy(new_board)
     new_game.player1 = Player(1,"Human", "O")
     new_game.player2 = Player(2,"Computer", "X")
-    assert new_game.expert_ai(new_game.board,"X") == (0,0,2)
+    assert new_game.expert_ai(new_game.board,-math.inf,math.inf,"X") == (0,0,2)
 
 def next_move_and_result(player, board_string):
     new_board = Board()
