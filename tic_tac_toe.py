@@ -337,37 +337,59 @@ class Game:
 
         return self.intermediate_ai() 
     
-    def expert_ai(self, board_state, player):
+    def expert_ai(self, board_state, alpha, beta, player):
         # Perfect play, always at least draws
         # Minimax implementation
+        # Random first position now obsolete due to alpha beta pruning
+        #if board_state.is_board_empty():
+            #row, column = self.beginner_ai()
+            #return 0 , row, column
+
         winner = board_state.provide_winner()
         if winner:
             if winner == "tie":
-                return 0, -8, -8
+                return 0, None, None
             if winner == self.get_computer_symbol():
-                return 1, -8, -8 
+                return 1, None, None 
             else:
-                return -1, -8, -8
+                return -1, None, None
         
         if player == self.get_computer_symbol():
             maxEval = -math.inf 
             all_boards = board_state.get_all_moves(self.get_computer_symbol())
+            best_row = None
+            best_column = None
             for board_tuple in all_boards:
-                board,r_row,r_column = board_tuple
-                eval = self.expert_ai(board,self.get_human_symbol())
+                board,t_row,t_column = board_tuple
+                eval = self.expert_ai(board,alpha, beta, self.get_human_symbol())
                 r_eval, _row, _column = eval
                 maxEval = max(maxEval,r_eval)
-            return maxEval, r_row, r_column
+                alpha = max(alpha,r_eval)
+                if beta <= alpha:
+                    break
+                if maxEval == r_eval:
+                    best_row = t_row
+                    best_column = t_column
+
+            return maxEval, best_row, best_column
 
         else:
             minEval = math.inf
             all_boards = board_state.get_all_moves(self.get_human_symbol())
+            best_row = None
+            best_column = None
             for board_tuple in all_boards:
-                board,r_row,r_column = board_tuple
-                eval = self.expert_ai(board,self.get_computer_symbol())
+                board,t_row,t_column = board_tuple
+                eval = self.expert_ai(board,alpha, beta, self.get_computer_symbol())
                 r_eval, _row, _column = eval
                 minEval = min(minEval, r_eval)
-            return minEval, r_row, r_column
+                beta = min(beta,r_eval)
+                if beta <= alpha:
+                    break
+                if minEval == r_eval:
+                    best_row = t_row
+                    best_column = t_column
+            return minEval, best_row, best_column
 
         # Initial Negamax implementation
         """if board_state.is_board_empty():
@@ -412,8 +434,9 @@ class Game:
                     row, column = self.intermediate_ai()
                 elif ai == "A":
                     row, column = self.advanced_ai()
-                #elif ai == "E":
-                    #_score, row, column = self.expert_ai(self.board, self.current_turn.symbol)
+                elif ai == "E":
+                    print(self.board, self.current_turn.symbol, self.get_computer_symbol())
+                    _score, row, column = self.expert_ai(self.board,-math.inf,math.inf, self.current_turn.symbol)
 
             self.board.place(self.current_turn.symbol,column,row)
             self.board.print_board()
@@ -441,13 +464,7 @@ if __name__ == '__main__':
     ## Beginning of game play ##
     print("Welcome to tic-tac-toe!")
     new_game = Game()
-    new_board = Board()
-    new_board.board = [["O","O","X"],["X","?","O"],["?","?","X"]]
-    new_game.board = copy.deepcopy(new_board)
-    new_game.player1 = Player(1,"Human", "O")
-    new_game.player2 = Player(2,"Computer", "X")
-    print(new_game.expert_ai(new_game.board,"X"))
-    #new_game.execute_game()
+    new_game.execute_game()
 
 
 
