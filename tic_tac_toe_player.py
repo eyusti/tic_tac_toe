@@ -1,12 +1,12 @@
 from tic_tac_toe import Game, Player
 from tabulate import tabulate
 
-games_to_play_counter = 10
+games_to_play_counter = 100
 games_to_play = games_to_play_counter
 all_games = []
 
-ai_1 = "B"
-ai_2 = "B"
+ai_1 = "E"
+ai_2 = "E"
 
 while games_to_play_counter > 0:
     game = Game()
@@ -24,4 +24,4 @@ wins_player_2 = all_games.count("O")
 percent_wins_player_2 = wins_player_2 / games_to_play
 ties = all_games.count("tie")
 percent_ties = ties / games_to_play
-print(tabulate([[ai_1,"1", str(wins_player_1),str(percent_wins_player_1)],[ai_2,"2", str(wins_player_2),str(percent_wins_player_2)]],headers=["AI","Turn order","Games won","%"]))
+print(tabulate([[ai_1,"1", str(wins_player_1),str(percent_wins_player_1)],[ai_2,"2", str(wins_player_2),str(percent_wins_player_2)],["Tie", None, str(ties),str(percent_ties)]],headers=["AI","Turn order","Games won","%"]))

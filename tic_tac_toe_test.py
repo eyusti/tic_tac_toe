@@ -24,6 +24,18 @@ def test_minimax_2():
     new_game.player2 = Player(2,"Computer", "X")
     assert new_game.expert_ai(new_game.board,-math.inf,math.inf,"X") == (0,0,2)
 
+def test_minimax_3():
+    new_game = Game()
+    new_board = Board()
+    new_board.board = [["?","?","?"],["?","O","?"],["X","O","X"]]
+    new_game.board = new_board
+    new_game.player1 = Player(1,"Human", "O")
+    new_game.player2 = Player(2,"Computer", "X")
+    new_game.current_turn = new_game.player2
+    result = new_game.expert_ai(new_game.board,-math.inf,math.inf,"X")
+    assert result[1] == 0
+    assert result[2] == 1
+
 def next_move_and_result(player, board_string):
     new_board = Board()
     flat_board = board_string.split()
@@ -100,3 +112,6 @@ def test_visual_5():
     O O ?
     ? ? *
     """
+
+if __name__ == "__main__":
+    test_minimax_3()

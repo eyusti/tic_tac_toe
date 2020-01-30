@@ -39,6 +39,12 @@ AI      Turn order    Games won      %
 A                1          292  0.292
 A                2          125  0.125
 Tie                         583  0.583
+
+AI      Turn order    Games won    %
+----  ------------  -----------  ---
+E                1            0    0
+E                2            0    0
+Tie                        1000    1
 ```
 
 This appears to hold as you look at different permutations of AIs playing against each other.
@@ -54,7 +60,7 @@ Tie                         170  0.17       Tie                         562  0.5
 *Non-random algorithm as player 1*
 AI      Turn order    Games won       %     AI      Turn order    Games won       %
 ----  ------------  -----------  ------     ----  ------------  -----------  ------
-I                1         5876  0.5876     A                1         5940  0.5940
+I                1         5876  0.5876     A                1         5940  0.594
 B                2         2887  0.2887     B                2         2811  0.2811
 Tie                        1237  0.1237     Tie                        1249  0.1249
 ```

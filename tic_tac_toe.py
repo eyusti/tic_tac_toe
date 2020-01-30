@@ -208,6 +208,12 @@ class Game:
         else:
             return self.player2.symbol
 
+    def not_current_turn_symbol(self):
+        if self.current_turn.symbol == "X":
+            return "O"
+        if self.current_turn.symbol == "O":
+            return "X"
+
     # Checker Methods
     def check_row_for_block(self):
         row_id = 0
@@ -349,46 +355,46 @@ class Game:
         if winner:
             if winner == "tie":
                 return 0, None, None
-            if winner == self.get_computer_symbol():
+            if winner == self.current_turn.symbol:
                 return 1, None, None 
             else:
                 return -1, None, None
         
-        if player == self.get_computer_symbol():
+        all_boards = board_state.get_all_moves(player)
+
+        if player == self.current_turn.symbol:
             maxEval = -math.inf 
-            all_boards = board_state.get_all_moves(self.get_computer_symbol())
             best_row = None
             best_column = None
             for board_tuple in all_boards:
                 board,t_row,t_column = board_tuple
-                eval = self.expert_ai(board,alpha, beta, self.get_human_symbol())
+                eval = self.expert_ai(board,alpha, beta, self.not_current_turn_symbol())
                 r_eval, _row, _column = eval
-                maxEval = max(maxEval,r_eval)
+                if r_eval > maxEval:
+                    maxEval = r_eval
+                    best_row = t_row
+                    best_column = t_column
                 alpha = max(alpha,r_eval)
                 if beta <= alpha:
                     break
-                if maxEval == r_eval:
-                    best_row = t_row
-                    best_column = t_column
-
+    
             return maxEval, best_row, best_column
 
         else:
             minEval = math.inf
-            all_boards = board_state.get_all_moves(self.get_human_symbol())
             best_row = None
             best_column = None
             for board_tuple in all_boards:
                 board,t_row,t_column = board_tuple
-                eval = self.expert_ai(board,alpha, beta, self.get_computer_symbol())
+                eval = self.expert_ai(board,alpha, beta, self.current_turn.symbol)
                 r_eval, _row, _column = eval
-                minEval = min(minEval, r_eval)
+                if r_eval < minEval:
+                    minEval = r_eval
+                    best_row = t_row
+                    best_column = t_column
                 beta = min(beta,r_eval)
                 if beta <= alpha:
                     break
-                if minEval == r_eval:
-                    best_row = t_row
-                    best_column = t_column
             return minEval, best_row, best_column
 
         # Initial Negamax implementation
@@ -435,7 +441,7 @@ class Game:
                 elif ai == "A":
                     row, column = self.advanced_ai()
                 elif ai == "E":
-                    print(self.board, self.current_turn.symbol, self.get_computer_symbol())
+                    #print(self.board, self.current_turn.symbol, self.get_computer_symbol())
                     _score, row, column = self.expert_ai(self.board,-math.inf,math.inf, self.current_turn.symbol)
 
             self.board.place(self.current_turn.symbol,column,row)
@@ -456,6 +462,7 @@ class Game:
                     break
 
     def ai_vs_ai(self, ai_1, ai_2):
+        # This is only used in the tic_tac_toe_player.py script
         winner = None
 
         if self.current_turn == 1:
