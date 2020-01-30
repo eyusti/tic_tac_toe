@@ -45,11 +45,11 @@ This appears to hold as you look at different permutations of AIs playing agains
 
 *Random algorithm as player 1*
 ```
-AI      Turn order    Games won     %     AI      Turn order    Games won      %
-----  ------------  -----------  ----     ----  ------------  -----------  -----
-B                1          770  0.77     B                1          308  0.308
-I                2           60  0.06     A                2          130  0.13
-Tie                         170  0.17     Tie                         562  0.562
+AI      Turn order    Games won     %       AI      Turn order    Games won      %
+----  ------------  -----------  ----       ----  ------------  -----------  -----
+B                1          770  0.77       B                1          308  0.308
+I                2           60  0.06       A                2          130  0.13
+Tie                         170  0.17       Tie                         562  0.562
 
 *Non-random algorithm as player 1*
 AI      Turn order    Games won       %     AI      Turn order    Games won       %
