@@ -6,9 +6,12 @@ Tic Tac Toe is a great starting ground  since the game is solved (a player can a
 
 Because it is solved, pitting AIs against each other at the most optimized end of the spectrum is rather boring since it is pretty easy to either script move rules or use min-max to never loose a game. That being said, this implementation also includes a few other AI "levels" of difficulty.
 
-**Beginner**: Moves selected by RNG
-**Intermediate**: If there is a spot where the opponent can actively win, it will block that spot, otherwise it will default to RNG
-**Advanced**: Will prioritize a move that wins then game then one that blocks an opponent win. If neither exists, it will default to RNG
+**Beginner**: Moves selected by RNG 
+
+**Intermediate**: If there is a spot where the opponent can actively win, it will block that spot, otherwise it will default to RNG  
+
+**Advanced**: Will prioritize a move that wins then game then one that blocks an opponent win. If neither exists, it will default to RNG  
+
 **Expert**: Min-Max algorithm implementation with alpha-beta pruning (aka this one should always at least draw)
 
 ## Win Optimization Results
