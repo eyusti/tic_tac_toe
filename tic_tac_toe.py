@@ -116,10 +116,10 @@ class Game:
     def __init__(self):
         self.player1 = None
         self.player2 = None
-        self.game_type = None
         self.current_turn = None
         self.board = Board()
-    
+        self.game_type = None
+           
     # Game Setup
     def get_game_type(self):
         while True:
@@ -454,6 +454,43 @@ class Game:
                 if winner == "tie":
                     print("It's a " + winner)
                     break
+
+    def ai_vs_ai(self, ai_1, ai_2):
+        winner = None
+
+        if self.current_turn == 1:
+            ai= ai_1
+        else:
+            ai = ai_2
+
+        while not winner:
+            if ai == "B":
+                row, column = self.beginner_ai()
+            elif ai == "I":
+                row, column = self.intermediate_ai()
+            elif ai == "A":
+                row, column = self.advanced_ai()
+            elif ai == "E":
+                #print(self.board, self.current_turn.symbol, self.get_computer_symbol())
+                _score, row, column = self.expert_ai(self.board,-math.inf,math.inf, self.current_turn.symbol)
+
+            self.board.place(self.current_turn.symbol,column,row)
+            self.board.print_board()
+
+            if self.current_turn.order == 1:
+                self.current_turn = self.player2
+            else:
+                self.current_turn = self.player1
+
+            winner = self.board.provide_winner()
+            if winner:
+                if winner == "X" or winner == "O":
+                    print("The winner is " + winner)
+                    return winner
+            
+                if winner == "tie":
+                    print("It's a " + winner)
+                    return winner
 
     def execute_game(self):
         new_game.get_game_type()
