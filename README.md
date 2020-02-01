@@ -6,17 +6,16 @@ Tic Tac Toe is a great starting ground  since the game is solved (a player can a
 
 Because it is solved, pitting AIs against each other at the most optimized end of the spectrum is rather boring since it is pretty easy to either script move rules or use min-max to never loose a game. That being said, this implementation also includes a few other AI "levels" of difficulty.
 
-<p style="text-align: center;">
-**Beginner (B)**: Moves selected by RNG
+>**Beginner (B)**: Moves selected by RNG
 
-**Intermediate Defensive (ID)**: If there is a spot where the opponent can actively win, it will block that spot, otherwise it will default to RNG  
+>**Intermediate Defensive (ID)**: If there is a spot where the opponent can actively win, it will block that spot, otherwise it will default to RNG  
 
-**Intermediate Offensive (IO)**: If there is a spot where the AI can actively win, it will take that spot, otherwise it will default to RNG
+>**Intermediate Offensive (IO)**: If there is a spot where the AI can actively win, it will take that spot, otherwise it will default to RNG
 
-**Advanced (A)**: Will prioritize a move that wins then game then one that blocks an opponent win. If neither exists, it will default to RNG  
+>**Advanced (A)**: Will prioritize a move that wins then game then one that blocks an opponent win. If neither exists, it will default to RNG  
 
-**Expert (E)**: Min-Max algorithm implementation with alpha-beta pruning (aka this one should always at least draw)
-</p>
+>**Expert (E)**: Min-Max algorithm implementation with alpha-beta pruning (aka this one should always at least draw)
+
 
 ## Win Optimization Results
 Based on 1,000 games played between the AIs, here are some interesting take aways:
@@ -75,8 +74,10 @@ AI      Turn order    Games won   AI      Turn order    Games won   AI      Turn
 E                1          999   E                1          863   E                1          855
 ID               2            0   IO               2            0   A                2            0
 Tie                           1   Tie                         137   Tie                         145
+```
 
 *Non-random algorithm as player 1*
+```
 AI      Turn order    Games won   AI      Turn order    Games won   AI      Turn order    Games won
 ----  ------------  -----------   ----  ------------  -----------   ----  ------------  -----------
 ID               1          802   IO               1          790   A                1          899
