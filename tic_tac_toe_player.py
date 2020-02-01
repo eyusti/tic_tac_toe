@@ -1,11 +1,11 @@
 from tic_tac_toe import Game, Player
 from tabulate import tabulate
 
-games_to_play_counter = 100
+games_to_play_counter = 1000
 games_to_play = games_to_play_counter
 all_games = []
 
-ai_1 = "E"
+ai_1 = "A"
 ai_2 = "E"
 
 while games_to_play_counter > 0:
@@ -13,7 +13,7 @@ while games_to_play_counter > 0:
     game.player1 = Player(1, ai_1, "X")
     game.player2 = Player(2, ai_2, "O")
     game.current_turn = game.player1
-    winner = game.ai_vs_ai(ai_1, ai_2)
+    winner = game.ai_vs_ai()
     all_games.append(winner)
     games_to_play_counter -= 1
 

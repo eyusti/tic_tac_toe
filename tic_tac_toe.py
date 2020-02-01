@@ -124,10 +124,10 @@ class Game:
     def get_game_type(self):
         while True:
             try:
-                self.game_type = input("Which game would you like to play? PvP (P) / Beginner (B) / Intermediate (I) / Advanced (A) / Expert (E): ").upper()
-                while self.game_type not in ["P","B","I","A","E"]:
+                self.game_type = input("Which game would you like to play? PvP (P) / Beginner (B) / Intermediate (IO/ID) / Advanced (A) / Expert (E): ").upper()
+                while self.game_type not in ["P","B","IO","ID","A","E"]:
                     print("That is an invalid option. Please select again")
-                    self.game_type = input("Which game would you like to play? PvP (P) / Beginner (B) / Intermediate (I) / Advanced (A) / Expert (E): ").upper()
+                    self.game_type = input("Which game would you like to play? PvP (P) / Beginner (B) / Intermediate (IO/ID) / Advanced (A) / Expert (E): ").upper()
             except ValueError:
                 print("That is an invalid option. Please select again")
                 continue
@@ -151,7 +151,7 @@ class Game:
             return order
     
     def player_setup(self):
-        if self.game_type in ["B","I","A","E"]:
+        if self.game_type in ["B","IO","ID","A","E"]:
             order = self.get_order()
             if order == "F":
                 self.player1 = Player(1,"Human","X")
@@ -314,7 +314,7 @@ class Game:
             row, column = self.random_slot_generation()
         return row, column 
 
-    def intermediate_ai(self):
+    def intermediate_defensive_ai(self):
         # Defensively blocks opponent completion
         blockers = [
             self.check_row_for_block(),
@@ -326,6 +326,20 @@ class Game:
         for blocker in blockers:
             if blocker is not None:
                 return blocker.row, blocker.column
+        return self.beginner_ai()
+
+    def intermediate_offensive_ai(self):
+        # Defensively blocks opponent completion
+        offensives = [
+            self.check_row_to_win(),
+            self.check_diagonal_to_win(),
+            self.check_other_diagonal_to_win(),
+            self.check_column_to_win()
+        ]
+
+        for offense in offensives:
+            if offense is not None:
+                return offense.row, offense.column 
         return self.beginner_ai()
 
     def advanced_ai(self):
@@ -341,7 +355,7 @@ class Game:
             if offense is not None:
                 return offense.row, offense.column  
 
-        return self.intermediate_ai() 
+        return self.intermediate_defensive_ai() 
     
     def expert_ai(self, board_state, alpha, beta, player):
         # Perfect play, always at least draws
@@ -436,8 +450,10 @@ class Game:
             else:
                 if ai == "B":
                     row, column = self.beginner_ai()
-                elif ai == "I":
-                    row, column = self.intermediate_ai()
+                elif ai == "ID":
+                    row, column = self.intermediate_defensive_ai()
+                elif ai == "IO":
+                    row, column = self.intermediate_offensive_ai()
                 elif ai == "A":
                     row, column = self.advanced_ai()
                 elif ai == "E":
@@ -461,20 +477,18 @@ class Game:
                     print("It's a " + winner)
                     break
 
-    def ai_vs_ai(self, ai_1, ai_2):
+    def ai_vs_ai(self):
         # This is only used in the tic_tac_toe_player.py script
-        winner = None
-
-        if self.current_turn == 1:
-            ai= ai_1
-        else:
-            ai = ai_2
+        winner = None     
 
         while not winner:
+            ai = self.current_turn.name
             if ai == "B":
                 row, column = self.beginner_ai()
-            elif ai == "I":
-                row, column = self.intermediate_ai()
+            elif ai == "ID":
+                row, column = self.intermediate_defensive_ai()
+            elif ai == "IO":
+                row, column = self.intermediate_offensive_ai()
             elif ai == "A":
                 row, column = self.advanced_ai()
             elif ai == "E":
