@@ -96,9 +96,9 @@ E                2          817   E                2          193   E           
 Tie                         183   Tie                         807   Tie                         814
 ```
 
-The previous analysis appears to hold here as well. You can see in both data sets that while the offensive AI ourtight wins more against the beginner AI than the defensive AI, it also has more outright losses in both cases. Similarly, the offensive AI fairs poorly against the expert AI. While the defensive also does not win any games, more of the outcomes are bucketed in ties rather than streight losses.
+The previous analysis appears to hold here as well. You can see in both data sets that while the offensive AI outright wins more against the beginner AI than the defensive AI, it also has more outright losses in both cases. Similarly, the offensive AI fairs poorly against the expert AI. While the defensive also does not win any games, more of the outcomes are bucketed in ties rather than straight losses.
 
-So, how do they fair againnst each other?
+So, how do they fare against each other?
 
 ```
 AI      Turn order    Games won      %     AI      Turn order    Games won      %
@@ -115,7 +115,7 @@ python 3.6
 
 This implementation includes a human player mode for bonus fun. I used this mode to do ad hoc testing so test coverage of this project was pretty low. While fun, future AI projects will likely not have a human player mode to simplify codebase and have more robust test coverage.
 
-There is also a re-write of min-max in a more negamax format implementation that takes advantage of the zero sum property of Tic Tac Toe.
+There is also a rewrite of min-max in a more negamax format implementation that takes advantage of the zero sum property of Tic Tac Toe.
 
 
 
