@@ -5,8 +5,8 @@ games_to_play_counter = 1000
 games_to_play = games_to_play_counter
 all_games = []
 
-ai_1 = "A"
-ai_2 = "E"
+ai_1 = "ID"
+ai_2 = "IO"
 
 while games_to_play_counter > 0:
     game = Game()

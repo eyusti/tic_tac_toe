@@ -114,4 +114,4 @@ def test_visual_5():
     """
 
 if __name__ == "__main__":
-    test_minimax_3()
+    test_minimax()
