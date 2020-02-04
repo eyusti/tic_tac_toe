@@ -108,7 +108,7 @@ ID               2          362  0.362     IO               2           63  0.06
 Tie                         419  0.419     Tie                         162  0.162
 ```
 
-Looks like the offensive AI is better than nothing, but is the worst performing of the AI options here.
+Based on this data, the offensive AI is better than not having any heuristic, but is the worst performing of the AI options here. 
 
 ## Other Notes and Takeaways
 python 3.6 
@@ -117,5 +117,6 @@ This implementation includes a human player mode for bonus fun. I used this mode
 
 There is also a rewrite of min-max in a more negamax format implementation that takes advantage of the zero sum property of Tic Tac Toe.
 
+It's interesting that the strength of the AI aligned well with the number of ties playing against itself. I'm curious if it has to do with the fact that optimal play by two players would lead to a draw and so the more optimal the AI the greater the number of draws. This does not explain then how the offensive AI had less ties playing against itself then two random AIs playing each other but still outperformed the two random AIs, but I'd like to investigate this further at a future date.
 
 
