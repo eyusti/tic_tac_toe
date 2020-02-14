@@ -1,25 +1,46 @@
 # Tic Tac Toe AIs
 
-This is the first of a series of projects that I am using to learn how to build optimized game AIs. For each project I'll be building out a number of AIs for each game and pitting them against each other to see how well they perform. 
+This is the first in a series of projects where I'm building AIs for games. For each project, I'll build out a number of AIs for each game and pit them against each other to see how well they perform. 
 
-Tic Tac Toe is a great starting ground  since the game is solved (a player can always draw) and also because the game state space (3^9 or 196839) is small and easily searchable.
+Tic Tac Toe is a great game to start with since it is solved (either player can force a draw) and because the game state space is small ( < 3^9 = 196839), and fully searchable.
 
-Because it is solved, pitting AIs against each other at the most optimized end of the spectrum is rather boring since it is pretty easy to either script move rules or use min-max to never lose a game. That being said, this implementation also includes a few other AI "levels" of difficulty.
+I ended up building 5 different Tic Tac Toe AIs:
 
-**Beginner (B)**: Moves selected by RNG
+**Beginner (B)**: Random move selection
 
 **Intermediate Defensive (ID)**: If there is a spot where the opponent can actively win, it will block that spot, otherwise it will default to RNG  
 
 **Intermediate Offensive (IO)**: If there is a spot where the AI can actively win, it will take that spot, otherwise it will default to RNG
 
-**Advanced (A)**: Will prioritize a move that wins the game then one that blocks an opponent win. If neither exists, it will default to RNG  
+**Advanced (A)**: Will prioritize a move that wins the game, then one that blocks an opponent win. If neither exists, it will default to RNG  
 
-**Expert (E)**: Min-Max algorithm implementation with alpha-beta pruning (aka this one should always at least draw)
+**Expert (E)**: Min-Max algorithm implementation with alpha-beta pruning (always at least draws)
 
-## Win Optimization Results
-Based on 1,000 games played between the AIs, here are some interesting takeaways:
+## AI Battleground Takeaways
 
-There are a total of 138 terminal board states in Tic Tac Toe. If you are the player to make the first move, 91 of those terminal states are winners, 44 are losers and three are ties. On paper, this means that there should be a pretty significant first player bias and the data backs this up:
+Tic Tac Toe is a pretty thoroughly explored game so I can't say there were any revolutionary takeaways. However, there were a few interesting notes I wanted to highlight.
+
+1. A couple good heuristics go a long way
+
+Adding the instructions to block a win and to actively win went a long way. It is tempting to keep scripting additional instructions (you can fully script a game of Tic Tac Toe to always win), but even the most basic instructions improve performance significantly.
+
+```
+AI      Turn order    Games won      %     AI      Turn order    Games won      %
+----  ------------  -----------  -----     ----  ------------  -----------  ----- 
+B                1            0  0         A                1            0  0
+E                2          819  0.819     E                2          196  0.196
+Tie                         181  0.181     Tie                         804  0.804
+
+AI      Turn order    Games won      %     AI      Turn order    Games won     %
+----  ------------  -----------  -----     ----  ------------  -----------  ---- 
+E                1          997  0.997     E                1          880  0.88   
+B                2            0  0         A                2            0  0
+Tie                           3  0.003     Tie                         120  0.12
+```
+
+2. Interesting Outlier
+
+As I was playing the AIs against each other, I noticed one interesting outlier. 
 
 ```
 AI      Turn order    Games won      %
@@ -28,11 +49,6 @@ B                1          595  0.595
 B                2          287  0.287
 Tie                         118  0.118
 
-```
-
-Given two AIs playing at random, the first player has a distinct advantage. This advantage is maintained when playing the same non-random AIs against themselves. 
-
-```
 AI      Turn order    Games won      %
 ----  ------------  -----------  -----
 IO               1          657  0.657
@@ -58,65 +74,17 @@ E                2            0    0
 Tie                        1000    1
 ```
 
-It seems that the "better" the AI is, the more draws you see as it plays against itself. The exception to this hypothesis is the intermediate offensive AI as it draws less against itself than the random beginner AI playing against itself. You would expect the offensive AI to be "better" than random since there is more information being used in decision making. 
+In all cases of an AI playing against itself, more of the results ended in ties than the purely random game except in the case of the offensive intermediate AI. Instead, in this case, more games are converting to wins for both players in proportion to the first player advantage you see in all the above games. 
 
-To dive deeper into whether the intermediate offensive AI provides a heuristic improvement over random play, let's take a look at the intermediate defensive, intermediate offensive, and advanced AIs against the benchmarks of beginner AI and the expert AI. 
+This makes a lot of sense since this AI is largely going to be playing randomly since it won't encounter multiple winnable positions allowing it to make more than one informed choice. However, since it is able to actualize a win when it sees one, it is more likely that games would end in a win for either player than to randomly end up at a board with a tie (based on the result distribution of terminal board states). Additionally, the first player is eventually more likely to be presented with a winning board so they have the  advantage. 
 
-*Random/expert algorithm as player 1*
-```
-AI      Turn order    Games won   AI      Turn order    Games won   AI      Turn order    Games won
-----  ------------  -----------   ----  ------------  -----------   ----  ------------  -----------
-B                1          421   B                1          145   B                1           58
-IO               2          502   ID               2          423   A                2          721
-Tie                          77   Tie                         432   Tie                         221
-
-AI      Turn order    Games won   AI      Turn order    Games won   AI      Turn order    Games won
-----  ------------  -----------   ----  ------------  -----------   ----  ------------  -----------
-E                1          995   E                1          878   E                1          873
-IO               2            0   ID               2            0   A                2            0
-Tie                           5   Tie                         122   Tie                         127
-
-```
-This set of data provides some more nuance to the initial hypothesis. All of the AIs perform better than the beginner AI even though it has first player advantage. This leads us to believe that all of the AIs are at least a heuristic improvement over random. 
-
-It also seems that the greater the number of ties when played against itself is a pretty good indicator of overall performance here. The offensive AI loses significantly more against the expert AI than the other AIs. The beginner AI also wins significantly more games against the offensive AI in comparison to the other AIs. Let's see if this holds when the AIs go first against the benchmarks.
-
-*Non-random algorithm as player 1*
-```
-AI      Turn order    Games won   AI      Turn order    Games won   AI      Turn order    Games won
-----  ------------  -----------   ----  ------------  -----------   ----  ------------  -----------
-IO               1          830   ID               1          804   A                1          884
-B                2          113   B                2           23   B                2           13
-Tie                          57   Tie                         173   Tie                         103
-
-AI      Turn order    Games won   AI      Turn order    Games won   AI      Turn order    Games won
-----  ------------  -----------   ----  ------------  -----------   ----  ------------  -----------
-IO               1            0   ID               1            0   A                1            0
-E                2          817   E                2          193   E                2          186
-Tie                         183   Tie                         807   Tie                         814
-```
-
-The previous analysis appears to hold here as well. You can see in both data sets that while the offensive AI outright wins more against the beginner AI than the defensive AI, it also has more outright losses in both cases. Similarly, the offensive AI fairs poorly against the expert AI. While the defensive also does not win any games, more of the outcomes are bucketed in ties rather than straight losses.
-
-So, how do they fare against each other?
-
-```
-AI      Turn order    Games won      %     AI      Turn order    Games won      %
-----  ------------  -----------  -----     ----  ------------  -----------  ----- 
-IO               1          219  0.219     ID               1          775  0.775
-ID               2          362  0.362     IO               2           63  0.063
-Tie                         419  0.419     Tie                         162  0.162
-```
-
-Based on this data, the offensive AI is better than not having any heuristic, but is the worst performing of the AI options here. 
+> There are a total of 138 terminal board states in Tic Tac Toe. If you are the player to make the first move, 91 of those terminal states are winners, 44 are losers and 3 are ties. <sup>[FROM WIKIPEDIA](https://en.wikipedia.org/wiki/Tic-tac-toe#Combinatorics)</sup>
 
 ## Other Notes and Takeaways
 python 3.6 
 
-This implementation includes a human player mode for bonus fun. I used this mode to do ad hoc testing so test coverage of this project was pretty low. While fun, future AI projects will likely not have a human player mode to simplify codebase and have more robust test coverage.
+This implementation includes a human player mode for bonus fun if you want to test your Tic Tac Toe skills. I used this mode to do ad hoc testing so test coverage of this project is basically non-existant. 
 
-There is also a rewrite of min-max in a more negamax format implementation that takes advantage of the zero sum property of Tic Tac Toe.
-
-It's interesting that the strength of the AI aligned well with the number of ties playing against itself. I'm curious if it has to do with the fact that optimal play by two players would lead to a draw and so the more optimal the AI the greater the number of draws. This does not explain then how the offensive AI had less ties playing against itself then two random AIs playing each other but still outperformed the two random AIs, but I'd like to investigate this further at a future date.
+There is also a commented out rewrite of min-max that follow the negamax format if you want to check out what that would look like.
 
 
