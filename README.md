@@ -20,7 +20,7 @@ I ended up building 5 different Tic Tac Toe AIs:
 
 Tic Tac Toe is a pretty thoroughly explored game so I can't say there were any revolutionary takeaways. However, there were a few interesting notes I wanted to highlight.
 
-1. A couple good heuristics go a long way
+### A couple good heuristics go a long way
 
 Adding the instructions to block a win and to actively win went a long way. It is tempting to keep scripting additional instructions (you can fully script a game of Tic Tac Toe to always win), but even the most basic instructions improve performance significantly.
 
@@ -38,7 +38,7 @@ B                2            0  0         A                2            0  0
 Tie                           3  0.003     Tie                         120  0.12
 ```
 
-2. Interesting Outlier
+### Interesting Outlier
 
 As I was playing the AIs against each other, I noticed one interesting outlier. 
 
