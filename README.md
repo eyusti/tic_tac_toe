@@ -4,7 +4,7 @@ This is the first in a series of projects where I'm building AIs for games. For 
 
 Tic Tac Toe is a great game to start with since it is solved (either player can force a draw) and because the game state space is small ( < 3^9 = 196839), and fully searchable.
 
-I ended up building 5 different Tic Tac Toe AIs:
+## Tic Tac Toe AI Variations
 
 **Beginner (B)**: Random move selection
 
@@ -25,17 +25,17 @@ Tic Tac Toe is a pretty thoroughly explored game so I can't say there were any r
 Adding the instructions to block a win and to actively win went a long way. It is tempting to keep scripting additional instructions (you can fully script a game of Tic Tac Toe to always win), but even the most basic instructions improve performance significantly.
 
 ```
-AI      Turn order    Games won      %     AI      Turn order    Games won      %
-----  ------------  -----------  -----     ----  ------------  -----------  ----- 
-B                1            0  0         A                1            0  0
-E                2          819  0.819     E                2          196  0.196
-Tie                         181  0.181     Tie                         804  0.804
+AI      Turn order    Games won     AI      Turn order    Games won
+----  ------------  -----------     ----  ------------  -----------
+B                1            0     A                1            0
+E                2          819     E                2          196
+Tie                         181     Tie                         804
 
-AI      Turn order    Games won      %     AI      Turn order    Games won     %
-----  ------------  -----------  -----     ----  ------------  -----------  ---- 
-E                1          997  0.997     E                1          880  0.88   
-B                2            0  0         A                2            0  0
-Tie                           3  0.003     Tie                         120  0.12
+AI      Turn order    Games won     AI      Turn order    Games won
+----  ------------  -----------     ----  ------------  -----------
+E                1          997     E                1          880  
+B                2            0     A                2            0
+Tie                           3     Tie                         120
 ```
 
 ### Interesting Outlier
@@ -43,35 +43,17 @@ Tie                           3  0.003     Tie                         120  0.12
 As I was playing the AIs against each other, I noticed one interesting outlier. 
 
 ```
-AI      Turn order    Games won      %
-----  ------------  -----------  -----
-B                1          595  0.595
-B                2          287  0.287
-Tie                         118  0.118
+AI      Turn order    Games won   AI      Turn order    Games won   AI      Turn order    Games won 
+----  ------------  -----------   ----  ------------  -----------   ----  ------------  ----------- 
+B                1          595   IO               1          657   ID               1          215 
+B                2          287   IO               2          291   ID               2           82 
+Tie                         118   Tie                          52   Tie                         703 
 
-AI      Turn order    Games won      %
-----  ------------  -----------  -----
-IO               1          657  0.657
-IO               2          291  0.291
-Tie                          52  0.052
-
-AI      Turn order    Games won      %
-----  ------------  -----------  -----
-ID               1          215  0.215
-ID               2           82  0.082
-Tie                         703  0.703
-
-AI      Turn order    Games won      %
-----  ------------  -----------  -----
-A                1          324  0.324
-A                2          167  0.167
-Tie                         509  0.509
-
-AI      Turn order    Games won    %
-----  ------------  -----------  ---
-E                1            0    0
-E                2            0    0
-Tie                        1000    1
+AI      Turn order    Games won   AI      Turn order    Games won
+----  ------------  -----------   ----  ------------  -----------
+A                1          324   E                1            0
+A                2          167   E                2            0
+Tie                         509   Tie                        1000
 ```
 
 In all cases of an AI playing against itself, more of the results ended in ties than the purely random game except in the case of the offensive intermediate AI. Instead, in this case, more games are converting to wins for both players in proportion to the first player advantage you see in all the above games. 
